@@ -15,7 +15,7 @@ spec: # Dictionary
     spec:
       containers: # List
         - name: myapp1-container
-          image: ghcr.io/stacksimplify/kubenginxhelm:0.1.0
+          image: ghcr.io/stacksimplify/kubenginxhelm:0.4.0
           ports: 
             - containerPort: 80  
     

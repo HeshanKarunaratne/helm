@@ -1,6 +1,6 @@
 # Helm
 
-## Configure kubeconfig for kubectl for Docker Desktop k8s Cluster
+### Configure kubeconfig for kubectl for Docker Desktop k8s Cluster
 ```t
 # Verify kubectl version
 kubectl version 
@@ -32,7 +32,7 @@ kubectl get svc
 http://localhost:31300
 ```
 
-## Step-07: Install Helm using Package Managers
+### Install Helm using Package Managers
 - [Install Helm](https://helm.sh/docs/intro/install/)
 ```t
 # From Chocolatey (Windows)
@@ -48,7 +48,7 @@ helm version
 helm env
 ```
 
-## Helm Basic Commands
+### Helm Basic Commands
 We will use the following commands as part of this demo
 - helm repo list
 - helm repo add <DESIRED_NAME> <REPO_URL>
@@ -215,4 +215,65 @@ helm install stacksimplify/mychart1 --generate-name
 # Uninstall Helm Release
 helm uninstall <RELEASE-NAME>
 helm uninstall mychart1-1689683948
+```
+
+### Helm Install Atomic Flag
+- `--atomic` flag deletes the helm installation if any error occurs during the installation
+- The `--wait` flag will be set automatically if `--atomic` is used
+- `--wait` will wait until all Pods, PVCs, Services, and minimum number of Pods of a Deployment, StatefulSet, or ReplicaSet are in a ready state before marking the release as successful. It will wait for as long as `--timeout`
+- `--timeout` defaults to 5mins
+
+```t
+# Install Helm Chart 
+helm install dev101 stacksimplify/mychart1
+Observation: dev101 in deployed status
+
+# Access Application
+http://localhost:31231
+
+# Install Helm Chart 
+helm install qa101 stacksimplify/mychart1
+Observation: qa101 in failed status
+
+# Install Helm Chart 
+helm install qa101 stacksimplify/mychart1 --atomic
+Observation: qa101 release is uninstalled 
+```
+
+### Helm with Kubernetes Namespaces
+- Any resource we manage using HELM are specific to Kubernetes Namespace and by default all the resources we create belongs to default namespace
+- In case if we want to deploy k8s resources to a namespace, we need to specify that using flag `--namespace` or `-n`
+- We can also create a namespace during `helm install` using flags `--namespace` and `--create-namespace` 
+
+```t
+# List Kubernetes Namespaces 
+kubectl get ns
+
+# Install Helm Release by creating Kubernetes Namespace
+helm install dev101 stacksimplify/mychart2 --version "0.1.0" --namespace dev --create-namespace
+
+# Check the release installed in dev namespace
+helm list -n dev
+helm list --namespace dev
+
+# Helm Status
+helm status dev101 --show-resources --namespace dev
+
+# List Kubernetes Pods
+kubectl get pods --namespace dev
+
+# List Services
+kubectl get svc -n dev
+
+# List Deployments
+kubectl get deploy -n dev
+
+# Helm Upgrade
+helm upgrade dev101 stacksimplify/mychart2 --version "0.3.0" --namespace dev
+
+# Uninstall Helm Releas
+helm uninstall dev101 --namespace dev
+
+# Delete dev namespace
+kubectl delete namespace dev
 ```

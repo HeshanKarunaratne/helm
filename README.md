@@ -271,9 +271,75 @@ kubectl get deploy -n dev
 # Helm Upgrade
 helm upgrade dev101 stacksimplify/mychart2 --version "0.3.0" --namespace dev
 
-# Uninstall Helm Releas
+# Uninstall Helm Release
 helm uninstall dev101 --namespace dev
 
 # Delete dev namespace
 kubectl delete namespace dev
 ```
+
+### Helm Override default values from values.yaml
+- `--dry-run` will generate the templates it will create 
+- `--debug` will give you more additional details on the installation
+
+```t
+# Helm Install with --dry-run command
+helm install myapp101 stacksimplify/mychart1 --set service.nodePort=31240 --dry-run --debug
+Observation: Templates will be generated with overridden values in the command
+```
+
+- We are going to override above release with below yaml file
+```yaml
+# change replicas from 1 to 2
+replicaCount: 2
+
+# Add tag as "2.0.0" which will override the default appversion "1.0.0" from our mychart1
+image:
+  repository: ghcr.io/stacksimplify/kubenginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "2.0.0"
+
+# Change nodePort from 31231 to 31250
+service:
+  type: NodePort
+  port: 80
+  nodePort: 31250
+```
+
+```t
+# helm upgrade with --dry-run and --debug commands
+helm upgrade myapp101 stacksimplify/mychart1 -f myvalues.yaml --dry-run --debug
+
+# helm upgrade
+helm upgrade myapp101 stacksimplify/mychart1 -f myvalues.yaml
+
+# helm get values
+helm get values RELEASE_NAME
+helm get values myapp101
+Observation: This command downloads a values file for a given release
+
+# helm get values with --revision
+helm get values RELEASE-NAME --revision int
+helm get values myapp101 --revision 1
+
+# helm get manifest
+helm get manifest RELEASE-NAME
+helm get manifest myapp101
+Observation: This command fetches the generated manifest for a given release
+
+# helm get manifest --revision
+helm get manifest RELEASE-NAME --revision int
+helm get manifest myapp101 --revision 1
+
+# helm get all
+helm get all RELEASE-NAME
+helm get all myapp101
+Observation: This command prints a human readable collection of information about the notes, hooks, supplied values, and generated manifest file of the given release
+
+helm uninstall myapp101
+```
+### Values Hierarchy 
+1. Sub chart `values.yaml` can be overriden by parents chart `values.yaml`
+2. Parent charts `values.yaml` can be overriden by user-supplied value file `(-f myvalues.yaml)`
+3. User-supplied value file `(-f myvalues.yaml)` can be overriden by `--set` parameters

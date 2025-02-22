@@ -343,3 +343,55 @@ helm uninstall myapp101
 1. Sub chart `values.yaml` can be overriden by parents chart `values.yaml`
 2. Parent charts `values.yaml` can be overriden by user-supplied value file `(-f myvalues.yaml)`
 3. User-supplied value file `(-f myvalues.yaml)` can be overriden by `--set` parameters
+
+- If you need to delete a key from the default values, you may override the value of the key to be null
+
+```t
+# Release: myapp101
+helm install myapp101 stacksimplify/mychart1 --atomic
+
+# Release: myapp102
+# Option-1: Give desired port other than 31231
+helm install myapp102 stacksimplify/mychart1 --set service.nodePort=31232
+
+# Option-2: Pass null value to nodePort (service.nodePort=null)
+helm install myapp102 stacksimplify/mychart1 --set service.nodePort=null
+Observation: service.nodePort will get a value from 30000-32767 default value range
+
+helm uninstall myapp101
+helm uninstall myapp102
+```
+
+### Understand Helm Chart Folder Structure
+
+```t
+# Helm Create Chart
+helm create <CHART-NAME>
+helm create basechart
+Observation: Below structure will be created
+
+└── basechart
+    ├── .helmignore
+    ├── Chart.yaml
+    ├── LICENSE
+    ├── README.md
+    ├── charts
+    ├── templates
+    │   ├── NOTES.txt
+    │   ├── _helpers.tpl
+    │   ├── deployment.yaml
+    │   ├── hpa.yaml
+    │   ├── ingress.yaml
+    │   ├── service.yaml
+    │   ├── serviceaccount.yaml
+    │   └── tests
+    │       └── test-connection.yaml
+    └── values.yaml
+```
+
+- `Chart.yaml` contains all important chart information(metadata)
+- `values.yaml` is the default configuration values for the chart
+- `charts folder` is a directory containing any charts upon which the parent chart depends on
+- `templates folder` is a directory of templates that, when combined with values, will generate valid Kubernetes manifest files. This is where helm finds the yaml manifests for our services, deployments and other k8s objects. If we have k8s resources for our application, we just need to convert them to helm equivalent and put them in the templates folder so that we can deploy them using `helm install` command.
+- When you want to create reusable parts in your chart use `templates/_helpers.tpl`
+- `templates/NOTES.txt` is an optional file which provides important information about our helm chart. The main difference is NOTES.txt rendered, its not sent to k8s cluster, but the output is displayed in the command line window

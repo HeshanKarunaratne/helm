@@ -26,7 +26,7 @@ Kubernetes Cluster Version Major: {{ .Capabilities.KubeVersion.Major }}
 Kubernetes Cluster Version Minor: {{ .Capabilities.KubeVersion.Minor }}
 Kubernetes Cluster Version: {{ .Capabilities.KubeVersion }} and {{ .Capabilities.KubeVersion.Version }}
 Helm Version: {{ .Capabilities.HelmVersion }}
-Helm Version Semver: {{ .Capabilities.HelmVersion.Version }}
+Helm Version Server: {{ .Capabilities.HelmVersion.Version }}
 
 {{/* Template Object */}}
 Template Name: {{ .Template.Name }} 
@@ -36,6 +36,6 @@ Template Base Path: {{ .Template.BasePath }}
 File Get: {{ .Files.Get "myconfig1.toml" }}
 File Glob as Config: {{ (.Files.Glob "config-files/*").AsConfig }}
 File Glob as Secret: {{ (.Files.Glob "config-files/*").AsSecrets }}
-File Lines1: {{ .Files.Lines "myconfig1.toml" }}
-File Lines2: {{ .Files.Lines "config-files/myconfig2.toml" }}
+File Lines: {{ .Files.Lines "myconfig1.toml" }}
+File Lines: {{ .Files.Lines "config-files/myconfig2.toml" }}
 File Glob: {{ .Files.Glob "config-files/*" }}

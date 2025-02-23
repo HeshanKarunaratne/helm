@@ -395,3 +395,18 @@ Observation: Below structure will be created
 - `templates folder` is a directory of templates that, when combined with values, will generate valid Kubernetes manifest files. This is where helm finds the yaml manifests for our services, deployments and other k8s objects. If we have k8s resources for our application, we just need to convert them to helm equivalent and put them in the templates folder so that we can deploy them using `helm install` command.
 - When you want to create reusable parts in your chart use `templates/_helpers.tpl`
 - `templates/NOTES.txt` is an optional file which provides important information about our helm chart. The main difference is NOTES.txt rendered, its not sent to k8s cluster, but the output is displayed in the command line window
+
+### Helm Builtin Objects
+
+- Root object dot or Period(.)
+    - .Release 
+    - .Chart 
+    - .Values 
+    - .Capabilities 
+    - .Template 
+    - .Files 
+
+- **Values Object:** Values passed into the template from the values.yaml file and from user-supplied files. By default, Values is empty.
+- **Capabilities Object:** This provides information about what capabilities the Kubernetes cluster supports
+- **Template Object:** Contains information about the current template that is being executed
+- Put the below in `NOTES.txt` and test it

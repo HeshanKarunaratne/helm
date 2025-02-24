@@ -410,3 +410,10 @@ Observation: Below structure will be created
 - **Capabilities Object:** This provides information about what capabilities the Kubernetes cluster supports
 - **Template Object:** Contains information about the current template that is being executed
 - Put the below in `NOTES.txt` and test it
+
+## Helm Development
+
+### Template Action "{{ }}"
+
+- Anything in between Template Action `{{ .Chart.Name }}` is called Action Element
+- Anything in between Template Action `{{ .Chart.Name }}` will be rendered by helm template engine and replace necessary values

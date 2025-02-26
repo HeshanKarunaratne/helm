@@ -417,3 +417,46 @@ Observation: Below structure will be created
 
 - Anything in between Template Action `{{ .Chart.Name }}` is called Action Element
 - Anything in between Template Action `{{ .Chart.Name }}` will be rendered by helm template engine and replace necessary values
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+  annotations:    
+    annotations:    
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    # quote function
+    app.kubernetes.io/managed-by: {{ quote .Release.Service }} 
+    # quote function with pipeline
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    # default Function
+    app.kubernetes.io/name: {{ default "DEF" .Values.releaseName | lower }}
+    # Controlling Leading and Trailing White spaces 
+    leading-whitespace: "   {{- .Chart.Name }}    kalyan"
+    trailing-whitespace: "   {{ .Chart.Name -}}    kalyan"
+    leadtrail-whitespace: "   {{- .Chart.Name -}}    kalyan"
+    # indent function
+    indenttest: "  {{- .Chart.Name | indent 4 -}}  "
+    # nindent function
+    nindenttest: "  {{- .Chart.Name | nindent 4 -}}  "      
+spec:
+  replicas: {{ default 2 .Values.replicaCount }} 
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+        resources: 
+        {{- toYaml .Values.resources | nindent 10}}
+```

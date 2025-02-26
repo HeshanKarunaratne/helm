@@ -10,9 +10,19 @@ metadata:
     # quote function
     app.kubernetes.io/managed-by: {{ quote .Release.Service }} 
     # quote function with pipeline
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}             
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    # default Function
+    app.kubernetes.io/name: {{ default "DEF" .Values.releaseName | lower }}
+    # Controlling Leading and Trailing White spaces 
+    leading-whitespace: "   {{- .Chart.Name }}    kalyan"
+    trailing-whitespace: "   {{ .Chart.Name -}}    kalyan"
+    leadtrail-whitespace: "   {{- .Chart.Name -}}    kalyan"
+    # indent function
+    indenttest: "  {{- .Chart.Name | indent 4 -}}  "
+    # nindent function
+    nindenttest: "  {{- .Chart.Name | nindent 4 -}}  "      
 spec:
-  replicas: 3
+  replicas: {{ default 2 .Values.replicaCount }} 
   selector:
     matchLabels:
       app: nginx
@@ -26,3 +36,5 @@ spec:
         image: ghcr.io/stacksimplify/kubenginx:4.0.0
         ports:
         - containerPort: 80
+        resources: 
+        {{- toYaml .Values.resources | nindent 10}}

@@ -1,10 +1,5 @@
-# Helm Development - Flow Control If-Else
 
-## Step-01: Introduction
--  We can use `if/else` for creating conditional blocks in Helm Templates
-- **eq:** For templates, the operators (eq, ne, lt, gt, and, or and so on) are all implemented as functions. 
-- In pipelines, operations can be grouped with parentheses ((, and )).
-- [Additional Reference: Operators are functions](https://helm.sh/docs/chart_template_guide/functions_and_pipelines/#operators-are-functions)
+
 ### IF-ELSE Syntax
 ```t
 {{ if PIPELINE }}

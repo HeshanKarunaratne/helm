@@ -5,13 +5,13 @@ metadata:
   labels:
     app: nginx
 spec:
-{{- if eq .Values.myapp.env "prod" }}
+  {{- if eq .Values.myapp.env "prod" }}
   replicas: 4
-{{- else if eq .Values.myapp.env "qa" }}  
+  {{- else if eq .Values.myapp.env "dev" }}
   replicas: 2
-{{- else }}  
+  {{- else }}
   replicas: 1
-{{- end }}  
+  {{- end }}
   selector:
     matchLabels:
       app: nginx

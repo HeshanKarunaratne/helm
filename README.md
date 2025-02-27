@@ -460,3 +460,37 @@ spec:
         resources: 
         {{- toYaml .Values.resources | nindent 10}}
 ```
+
+### Helm Development - Flow Controls
+-  We can use `if/else` for creating conditional blocks in Helm Templates
+- **eq:** For templates, the operators (eq, ne, lt, gt, and, or and so on) are all implemented as functions. 
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+spec:
+  {{- if eq .Values.myapp.env "prod" }}
+  replicas: 4
+  {{- else if eq .Values.myapp.env "dev" }}
+  replicas: 2
+  {{- else }}
+  replicas: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```

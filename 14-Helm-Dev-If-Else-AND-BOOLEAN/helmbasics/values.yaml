@@ -1,6 +1,5 @@
 # If, else if, else
 myapp:
-  env: prod
+  env: uat
   retail:
-    enableFeature: true
-
+    enableFeature: false

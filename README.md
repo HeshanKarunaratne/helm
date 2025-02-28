@@ -494,3 +494,73 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+### Flow Control If-Else with Boolean Check and "AND Function"
+
+- **and:**  Returns the boolean AND of two or more arguments (the first empty argument, or the last argument).
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+spec:
+{{- if and .Values.myapp.retail.enableFeature (eq .Values.myapp.env "prod") }}
+  replicas: 6
+{{- else if eq .Values.myapp.env "prod" }}
+  replicas: 4
+{{- else if eq .Values.myapp.env "qa" }}
+  replicas: 2
+{{- else }}
+  replicas: 1
+{{- end }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+### Flow Control If-Else with OR Function
+
+- **or:**  Returns the boolean OR of two or more arguments (the first non-empty argument, or the last argument).
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+spec:
+{{- if or (eq .Values.myapp.env "prod") (eq .Values.myapp.env "uat") }}
+  replicas: 6
+{{- else if eq .Values.myapp.env "qa" }}  
+  replicas: 2
+{{- else }}  
+  replicas: 1  
+{{- end }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```

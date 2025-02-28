@@ -9,9 +9,9 @@ spec:
   replicas: 6
 {{- else if eq .Values.myapp.env "qa" }}  
   replicas: 2
-{{- else }}
-  replicas: 1
-{{- end }}  
+{{- else }}  
+  replicas: 1  
+{{- end }}
   selector:
     matchLabels:
       app: nginx

@@ -564,3 +564,93 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+### Flow Control Function: not
+
+- **not:**  Returns the boolean negation of its argument.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+spec:
+{{- if not (eq .Values.myapp.env "prod") }}
+  replicas: 1
+{{- else }}  
+  replicas: 6
+{{- end }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+### Flow Control With
+
+- `with` action controls variable scoping. 
+- `with` action can allow you to set the current scope (.) to a particular object.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx  
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+        appManagedBy: {{ $.Release.Service }}
+        chartName: {{ $.Chart.Name }}
+      {{- end }}
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+- `with` action statement sets the dot obejct "." to `.Values.podAnnotations` 
+- Inside the `with` action block dot "." always refers to `.Values.podAnnotations` 
+- Outside the `with` action block dot "." refers to Root Object
+- To access Root Objects inside `with` action block we need to prepend that Root object with `$`
+
+### Scope more detailed for "with" action block
+
+- How to retrieve a single object from `.Values.myapps.data.config` ?
+- What if there is only need for 1 or 2 values from `.Values.myapps.data.config` ?
+- How to access each key value from `.Values.myapps.data.config` ?
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+data: 
+{{- with .Values.myapps.data.config }}
+  application-name: {{ .appName }}
+  application-type: {{ .appType }}
+{{- end}}
+```

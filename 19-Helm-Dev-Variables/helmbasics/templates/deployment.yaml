@@ -1,8 +1,8 @@
-{{- $chartname := .Chart.Name | quote | upper -}}
+{{- $chartName := .Chart.Name | quote | upper -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-{{ .Chart.Name }}-deployment # Action Element
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
   labels:
     app: nginx  
 spec:
@@ -16,10 +16,10 @@ spec:
       annotations:
         {{- toYaml . | nindent 8 }}
         appManagedBy: {{ $.Release.Service }}
-        appHelmChart: {{ $chartname }}        
-      {{- end }}  
+        chartName: {{ $chartName }}
+      {{- end }}
       labels:
-        app: nginx    
+        app: nginx
     spec:
       containers:
       - name: nginx

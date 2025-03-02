@@ -654,3 +654,77 @@ data:
   application-type: {{ .appType }}
 {{- end}}
 ```
+
+### Implement if-else for replicas with Boolean 
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx
+spec:
+{{- with .Values.myapp }}
+{{- if and .retail.enableFeature (eq .env "prod") }}
+  replicas: 6
+{{- else if eq .env "prod" }}
+  replicas: 4
+{{- else if eq .env "qa" }}
+  replicas: 2
+{{- else }}
+  replicas: 1
+{{- end }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+### Helm Variables
+
+```yaml
+{{- $chartName := .Chart.Name | quote | upper -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: nginx  
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+        appManagedBy: {{ $.Release.Service }}
+        chartName: {{ $chartName }}
+      {{- end }}
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+### Flow Control Range Action with List
+
+- Range in Helm is equivalent to for, foreach from prohramming languages
+- In helm we can iterate over a collection using Range operator

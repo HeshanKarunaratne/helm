@@ -728,3 +728,54 @@ spec:
 
 - Range in Helm is equivalent to for, foreach from prohramming languages
 - In helm we can iterate over a collection using Range operator
+
+### "Range Action" with "List of Values"
+
+```yaml
+{{- range .Values.namespaces}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .name }}
+---
+{{- end }}  
+```
+
+### "Range Action" with "List of Values" with Variables
+
+```yaml
+{{- range $environment := .Values.environments }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $environment.name }}
+---  
+{{- end }} 
+```
+
+### Range with Key Value pairs or Map or Dictionary 
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-configmap1
+data: 
+{{- range $key, $value := .Values.myapps.config1 }}
+{{- $key | nindent 2}}: {{ $value }}
+{{- end}}  
+```
+
+### Access Root Object in Range with Helm Variable
+
+```yaml
+{{- $chartname := .Chart.Name }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-configmap2
+data:
+{{- range $key, $value := .Values.myapps.config2 }}
+{{- $key | nindent 2 }}: {{ $value }}-{{ $chartname }}
+{{- end }}
+```

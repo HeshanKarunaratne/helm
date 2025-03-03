@@ -779,3 +779,67 @@ data:
 {{- $key | nindent 2 }}: {{ $value }}-{{ $chartname }}
 {{- end }}
 ```
+
+### Named Templates
+
+- Add dot "." (Root Object or period) at the end of template call to pass scope to template call
+```yaml
+{{/* Common Labels */}}
+{{- define "helmbasics.labels" }}
+    app: nginx
+    chartname: {{ .Chart.Name }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-deployment
+  labels:
+    {{- template "helmbasics.labels" . }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+```yaml
+{{/* Common Labels */}}
+{{- define "helmbasics.labels" }}
+    app: nginx
+    chartname: {{ .Chart.Name }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-deployment
+  labels:
+    {{- include "helmbasics.labels" . | upper }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```
+
+- Move the named template `helmbasics.labels` to `_helpers.tpl` file
+- But files whose name begins with an underscore (_) are assumed to not have a kubernetes manifest inside. 

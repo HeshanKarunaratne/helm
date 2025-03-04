@@ -843,3 +843,36 @@ spec:
 
 - Move the named template `helmbasics.labels` to `_helpers.tpl` file
 - But files whose name begins with an underscore (_) are assumed to not have a kubernetes manifest inside. 
+
+### Helm Printf Function
+
+```tpl
+{{/* k8s Resource Name: String Concat with Hyphen */}}
+{{- define "helmbasics.resourceName" }}
+{{- printf "%s-%s" .Release.Name .Chart.Name }}
+{{- end }}
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helmbasics.resourceName" . }}-development
+  labels:
+  {{- include "helmbasics.labels" . | upper }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/stacksimplify/kubenginx:4.0.0
+        ports:
+        - containerPort: 80
+```

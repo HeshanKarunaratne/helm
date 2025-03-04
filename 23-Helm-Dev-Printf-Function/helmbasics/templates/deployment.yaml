@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helmbasics.resourceName" . }}-deployment
+  name: {{ include "helmbasics.resourceName" . }}-development
   labels:
   {{- include "helmbasics.labels" . | upper }}
 spec:

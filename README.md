@@ -892,3 +892,54 @@ spec:
 {{- printf "%s-%s" .Release.Name .Chart.Name }}
 {{- end }}
 ```
+
+### Create and package charts
+
+```t
+# Helm Create Chart
+helm create <CHART-NAME>
+helm create myfirstchart
+
+# Helm Install
+helm install myapp1v1 .
+
+# Helm Status
+helm status myapp1v1 --show-resources
+
+# Helm Package - v1.0.0
+helm package myfirstchart/ -d packages/
+helm package myfirstchart/ --destination packages/
+
+# Helm Install from package - v2.0.0
+helm install myapp1v2 packages/myfirstchart-2.0.0.tgz --set service.nodePort=31232
+
+# Packaging using commands and not changing Chart.yaml
+helm package myfirstchart/ --app-version="3.0.0" --version="3.0.0" --destination packages/
+
+# Helm Install from package - v3.0.0
+helm install myapp1v3 packages/myfirstchart-3.0.0.tgz --set service.nodePort=31233 --atomic
+
+# Uninstall all
+helm uninstall myapp1v1
+helm uninstall myapp1v2
+helm uninstall myapp1v3
+```
+
+### Helm Show Commands
+
+```t
+# Helm Show Chart
+helm show chart myfirstchart/
+helm show chart packages/myfirstchart-2.0.0.tgz
+
+# Helm Show Values
+helm show values myfirstchart/
+helm show values packages/myfirstchart-2.0.0.tgz
+
+# Helm Show readme
+helm show readme myfirstchart/
+
+# Helm Show All
+helm show all myfirstchart/
+helm show all packages/myfirstchart-2.0.0.tgz
+```

@@ -943,3 +943,50 @@ helm show readme myfirstchart/
 helm show all myfirstchart/
 helm show all packages/myfirstchart-2.0.0.tgz
 ```
+
+### Helm Dependency Command
+
+- **helm dependency list:** List all of the dependencies declared in a chart.
+- **helm dependency update:** update parent chart `charts/` folded based on the contents of file `Chart.yaml`
+
+```t
+# Create Parent Chart
+helm create parentchart
+
+# Helm Dependency List
+helm dependency list
+Observation: 
+You should see status "missing" because we still didnt do helm dependency update
+
+# Helm Dependency Update
+helm dependency update
+Observation: 
+1. We should see both charts (mychart1-0.1.0.tgz, mychart2-0.4.0.tgz, mysql-9.9.0.tgz)downloaded to "parentchart/charts" folder
+2. We should see "Chart.lock" file in "parentchart" folder
+```
+
+### Helm Dependency Chart Version Ranges
+
+```t
+Helm Chart Version Notation: Major.Minor.Patch 
+MySQL Helm Chart Version: 9.10.8
+Major: 9
+Minor: 10
+Patch: 8
+```
+
+- We can define the version constraints using basic comparison operators
+
+```t
+# Basic Comparison Operators
+version: "= 9.10.8" 
+version: "!= 9.10.8" 
+version: ">= 9.10.8"
+version: "<= 9.10.8"
+version: "> 9.10.8"   
+version: "< 9.10.8"
+version: ">= 9.10.8 < 9.11.0"  
+```
+
+### For Range Comparison Major: Caret Symbol(ˆ)
+- The caret (^) operator is for major level changes once a stable (1.0.0) release has occurred.

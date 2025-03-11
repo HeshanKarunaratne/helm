@@ -990,3 +990,31 @@ version: ">= 9.10.8 < 9.11.0"
 
 ### For Range Comparison Major: Caret Symbol(ˆ)
 - The caret (^) operator is for major level changes once a stable (1.0.0) release has occurred.
+
+```t
+^9.10.1  is equivalent to >= 9.10.1, < 10.0.0
+^9.10.x  is equivalent to >= 9.10.0, < 10.0.0   
+^9.10    is equivalent to >= 9.10, < 10
+^9.x     is equivalent to >= 9.0.0, < 10        
+```
+
+### For Range Comparison Minor: Tilde Symbol(~)
+- The tilde (~) operator is for 
+  - patch level ranges when a minor version is specified 
+  - major level changes when the minor number is missing. 
+
+```t
+~9.10.1  is equivalent to >= 9.10.1, < 9.11.0
+~9.10    is equivalent to >= 9.10, < 9.11
+~9       is equivalent to >= 9, < 10
+^9.x     is equivalent to >= 9.0.0, < 10        
+```
+
+### Helm Dependency Build Command
+- **helm dependency build:** rebuild the `charts/` directory based on the `Chart.lock` file
+- In short `dep update` command will negotiate with version constraints defined in `Chart.yaml` where as `dep build` will try to build or download or update whatever version preset in `Chart.lock` file
+- If no lock file is found, `helm dependency build` will mirror the behavior of `helm dependency update`.
+
+### Helm Dependency Repository @REPO vs REPO-URL
+- When we are using Helm with DevOps pipelines across environments "@REPO" approach is not recommended
+- REPO-URL approach (repository: "https://charts.bitnami.com/bitnami") is always recommended

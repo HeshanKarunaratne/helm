@@ -1018,3 +1018,47 @@ version: ">= 9.10.8 < 9.11.0"
 ### Helm Dependency Repository @REPO vs REPO-URL
 - When we are using Helm with DevOps pipelines across environments "@REPO" approach is not recommended
 - REPO-URL approach (repository: "https://charts.bitnami.com/bitnami") is always recommended
+
+### Helm Dependency - Alias
+
+```yaml
+apiVersion: v2
+name: parentchart
+description: Learn Helm Dependency Concepts
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4dev
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4qa  
+- name: mychart2
+  version: "0.4.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart2
+```
+
+```t
+# Helm Dependency Update
+helm dep update parentchart/
+
+# Helm Install
+helm install myapp1 parentchart/ --atomic
+
+# Helm Status
+helm status myapp1 --show-resources
+
+# Access Application
+parentchart: http://localhost:<port-from-get-svc-output>
+childchart4dev: http://localhost:<port-from-get-svc-output>
+childchart4qa: http://localhost:<port-from-get-svc-output>
+mychart2: http://localhost:31232
+
+# Helm Uninstall
+helm uninstall myapp1
+```

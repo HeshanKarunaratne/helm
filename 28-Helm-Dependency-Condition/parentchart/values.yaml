@@ -85,6 +85,4 @@ affinity: {}
 mychart4:
   enabled: false
 mychart2:
-  enabled: false  
-
-
+  enabled: false

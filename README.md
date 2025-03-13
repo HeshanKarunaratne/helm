@@ -1062,3 +1062,44 @@ mychart2: http://localhost:31232
 # Helm Uninstall
 helm uninstall myapp1
 ```
+
+### Helm Dependency - Condition
+
+- Implement `Condition` for enabling or disabling Sub Charts or Child Charts
+- Override subchart(child chart) values from parent chart
+- By default, any chart is enabled
+
+```yaml
+dependencies:
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4
+  condition: mychart4.enabled
+- name: mychart2
+  version: "0.4.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart2
+  condition: mychart2.enabled
+```
+
+```yaml
+mychart4:
+  enabled: false
+mychart2:
+  enabled: false
+```
+
+```t
+# Helm Dependency Update
+helm dep update
+
+# Helm Install
+helm install myapp1 parentchart/ --atomic
+
+# Helm Status
+helm status myapp1 --show-resources
+
+# Helm Uninstall
+helm uninstall myapp1
+```

@@ -1103,3 +1103,74 @@ helm status myapp1 --show-resources
 # Helm Uninstall
 helm uninstall myapp1
 ```
+
+### Helm Dependency - Condition with Alias
+- If we have multiple dependencies with same chart name `mychart4` with different alias names like `childchart4dev` and `childchart4qa` in this case we need to define values.yaml with `alias names` for enabling or disabling those sub charts
+
+```yaml
+apiVersion: v2
+name: parentchart
+description: Learn Helm Dependency Concepts
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4dev
+  condition: childchart4dev.enabled
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4qa
+  condition: childchart4qa.enabled  
+```
+
+```yaml
+# Values for Child Charts with Alias Name of Chart
+childchart4dev:
+  enabled: false 
+childchart4qa:
+  enabled: true   
+```
+
+### Helm Dependency Tags
+- Instead of using `condition` we are going to use `tags`
+- If we have more amount of subcharts that need to be divided in to groups then we need to use `tags` instead of `condition`
+
+```yaml
+apiVersion: v2
+name: parentchart
+description: Learn Helm Dependency Concepts
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: mychart4
+  version: "0.1.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart4dev
+  tags: 
+    - frontend
+- name: mychart2
+  version: "0.4.0"
+  repository: "https://stacksimplify.github.io/helm-charts/"
+  alias: childchart2
+  tags:
+    - backend
+ ```
+
+```yaml
+tags:
+  frontend: false
+  backend: false
+```
+
+ ```t
+# Helm Install
+helm upgrade myapp1 parentchart/ --atomic --set tags.backend=true
+
+# Helm Install
+helm upgrade myapp1 parentchart/ --atomic --set tags.backend=true --set tags.frontend=true
+```

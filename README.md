@@ -1174,3 +1174,81 @@ helm upgrade myapp1 parentchart/ --atomic --set tags.backend=true
 # Helm Install
 helm upgrade myapp1 parentchart/ --atomic --set tags.backend=true --set tags.frontend=true
 ```
+
+### Use Global Values in Sub Charts
+
+- Untar the packages and use it
+```yaml
+apiVersion: v2
+name: parentchart
+description: Learn Helm Dependency Concepts
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: mychart4
+  version: "0.1.0"
+  repository: "file://charts/mychart4"
+  alias: childchart4
+  tags: 
+    - frontend
+- name: mychart2
+  version: "0.4.0"
+  repository: "file://charts/mychart2"
+  alias: childchart2
+  tags: 
+    - backend
+```
+
+```t
+# Helm Pull MyChart4
+helm pull https://stacksimplify.github.io/helm-charts/mychart4-0.1.0.tgz --untar
+
+# Helm Pull MyChart2
+helm pull https://stacksimplify.github.io/helm-charts/mychart2-0.4.0.tgz --untar
+
+# Helm Dependency list
+helm dependency list
+Observation: Packages are in unpacked status
+
+# Helm Dependency Update / Build
+helm dependency update
+Observation: you should find *.tgz files for both charts
+
+# Helm Dependency list
+helm dependency list
+Observation: Packages are in ok status
+```
+
+### Import Values Explicit
+
+```yaml
+exports:
+  # mapped to mychart1Data
+  mychart1Data:
+    mychart1appInfo:
+      appName: kapp1
+      appType: MicroService
+      appDescription: Used for listing products    
+```
+
+```yaml
+- name: mychart1
+  version: "0.1.0"
+  repository: "file://charts/mychart1"
+  alias: childchart1
+  tags: 
+    - frontend
+  import-values:
+      # Explicit Values Import Usecase
+    - mychart1Data
+```
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "parentchart.fullname" . }}-import-explicit
+data:
+{{- toYaml .Values.mychart1appInfo | nindent 2 }}
+```

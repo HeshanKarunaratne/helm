@@ -12,7 +12,7 @@ dependencies:
   tags: 
     - frontend
   import-values:
-    - mychart1Data # Import Values Explicit
+    - mychart1Data
 - name: mychart2
   version: "0.4.0"
   repository: "file://charts/mychart2"

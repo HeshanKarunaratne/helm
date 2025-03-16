@@ -1252,3 +1252,46 @@ metadata:
 data:
 {{- toYaml .Values.mychart1appInfo | nindent 2 }}
 ```
+
+### Import Values Implicit
+
+```yaml
+apiVersion: v2
+name: parentchart
+description: Learn Helm Dependency Concepts
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: mychart1
+  version: "0.1.0"
+  repository: "file://charts/mychart1"
+  alias: childchart1
+  tags: 
+    - frontend
+
+- name: mychart2
+  version: "0.4.0"
+  repository: "file://charts/mychart2"
+  alias: childchart2
+  tags: 
+    - backend
+  import-values: # Implicit Values Usecase
+    - child: service 
+    # Make sure to give a different name to parent
+      parent: mychart2service   
+    - child: image 
+      parent: mychart2image      
+```
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "parentchart.fullname" . }}-import-implicit
+data:
+  serviceType: {{ .Values.mychart2service.type }}
+  servicePort: {{ .Values.mychart2service.port | quote}}
+  servicenodePort: {{ .Values.mychart2service.nodePort | quote }}
+  imageRepository: {{ .Values.mychart2image.repository }}
+```

@@ -1295,3 +1295,11 @@ data:
   servicenodePort: {{ .Values.mychart2service.nodePort | quote }}
   imageRepository: {{ .Values.mychart2image.repository }}
 ```
+
+### Helm Starters
+- A new developer don't need to start from scratch in your organization if you already have starter charts. He can use them and build on top of it. 
+- We can also enforce certain resources that needs to be available in the created charts.
+- Where do we place the starter charts?
+  - We need to place starter charts in folder "$HELM_DATA_HOME/starters" folder
+- Are there any drawbacks?
+  - The `Chart.yaml` will be overwritten by the generator

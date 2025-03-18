@@ -1303,3 +1303,17 @@ data:
   - We need to place starter charts in folder "$HELM_DATA_HOME/starters" folder
 - Are there any drawbacks?
   - The `Chart.yaml` will be overwritten by the generator
+
+### helm lint 
+- Examine a chart for possible issues
+- This command takes a path to a chart and runs a series of tests to verify that the chart is well-formed
+
+- Replace "mystarterchart" with `<CHARTNAME>` in all files
+1. _helpers.tpl
+2. deployment.yaml
+3. service.yaml
+4. NOTES.txt
+5. Chart.yaml
+6. values.yaml (Here just in comment)
+
+- Copy mystarterchart to HELM_DATA_HOME/starters/

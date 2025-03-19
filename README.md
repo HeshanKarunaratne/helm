@@ -1317,3 +1317,24 @@ data:
 6. values.yaml (Here just in comment)
 
 - Copy mystarterchart to HELM_DATA_HOME/starters/
+
+```t
+# Helm Create using starter chart
+helm create mychart9 --starter=mystarterchart
+
+# Review mychart9 files
+1. Chart.yaml
+- It should be regenerated and versions should be overided for both version and appversion to 0.1.0
+2. "charts" directory: We should see "mychart4" should be present as packaged file "mychart4-0.1.0.tgz" even though in our starter chart we have it as UNZIPPED
+```
+
+### Helm Plugins
+
+```t
+# List Helm Plugins
+helm plugin list
+
+# Install Helm Starter-Plugins
+helm plugin install https://github.com/salesforce/helm-starter.git
+
+```

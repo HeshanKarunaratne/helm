@@ -1337,4 +1337,9 @@ helm plugin list
 # Install Helm Starter-Plugins
 helm plugin install https://github.com/salesforce/helm-starter.git
 
+# Install Helm Dashboard Plugin
+helm plugin install https://github.com/komodorio/helm-dashboard.git
+
+# Run helm Dashboard in given port
+helm dashboard --port=8090
 ```

@@ -1343,3 +1343,20 @@ helm plugin install https://github.com/komodorio/helm-dashboard.git
 # Run helm Dashboard in given port
 helm dashboard --port=8090
 ```
+
+### Build Helm Plugin
+
+```t
+# myplugin1
+name: "myplugin1"
+version: "0.1.0"
+usage: "Prints Helm Environment Variables"
+description: |-
+  Prints Helm Environment Variables
+command: "env"
+
+# Install Helm Plugin
+helm plugin install myplugin1/
+```
+
+### Helm Hooks

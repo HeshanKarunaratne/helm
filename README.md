@@ -1360,3 +1360,72 @@ helm plugin install myplugin1/
 ```
 
 ### Helm Hooks
+
+- Helm release Life cycle
+  - Install
+  - Upgrade
+  - Uninstall
+  - RollBack
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: myhook-preinstall
+  annotations:
+    "helm.sh/hook": "pre-install"
+spec:
+  restartPolicy: Never
+  containers:
+    - name: myhook-preinstall-container
+      image: busybox
+      imagePullPolicy: IfNotPresent
+      command:  ['sh', '-c', 'echo Pre-install hook Pod is running && sleep 15']      
+```
+
+```t
+# Insall Helm Release
+helm install myapp101 . --atomic
+
+# List Kubernetes Pods
+kubectl get pods
+Observation:
+1. We should see "myhook-preinstall" pod which should be completed status
+
+# Upgrade Helm Release
+helm upgrade myapp101 . --set image.tag=0.2.0
+
+# List Kubernetes Pods
+kubectl get pods
+Observation:
+1. We should see "myhook-preupgrade" pod which should be completed status
+
+# Uninstall/Delete Helm Release
+helm list
+helm uninstall myapp101 
+
+# List Kubernetes Pods
+kubectl get pods
+Observation:
+1. We should see "myhook-postdelete" pod which should be completed status
+2. We should see all the 3 hook pods present even after deleting/uninstalling the release
+```
+
+1. The resources that a hook creates are currently not tracked or managed as part of the release. 
+2. Once Helm verifies that the hook has reached its ready state, it will leave the hook resource alone.
+3. In short, `helm uninstall` will not delete hook resources. 
+
+### Helm Hooks Delete Policy
+
+1. We can define when to delete the hook resources using Hook Deletion Policies
+  - **before-hook-creation:** Delete the previous resource before a new hook is launched (default)
+  - **hook-succeeded:** Delete the resource after the hook is successfully executed
+  - **hook-failed:** Delete the resource if the hook failed during execution
+
+```yaml
+  "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+```
+
+4. Downside of using hook-failed 
+  - **hook-failed:** Delete the resource if the hook failed during execution
+  - The downside of this during Chart Development phase is, when our hook fails and its resource deleted, we will not have an option to troubleshoot.

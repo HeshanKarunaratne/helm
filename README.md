@@ -1429,3 +1429,51 @@ Observation:
 4. Downside of using hook-failed 
   - **hook-failed:** Delete the resource if the hook failed during execution
   - The downside of this during Chart Development phase is, when our hook fails and its resource deleted, we will not have an option to troubleshoot.
+
+### Helm Hook Weights
+
+- Hook weights can be positive or negative numbers but must be represented as strings (in double quotes "8")
+- When Helm starts the execution cycle of hooks of a particular Kind (Example: kind:pod) it will sort those hooks in ascending order.
+```yaml
+annotations:
+  "helm.sh/hook-weight": "5"
+```
+
+```yaml
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "-2"
+
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "5"
+
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "6"
+```
+
+### Helm Tests
+- Helm tests feature enables automated testing of k8s applications deployed using helm charts.
+- These tests ensure that the deployed application is functioning as expected.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "mydemoapp.fullname" . }}-test-connection"
+  labels:
+    {{- include "mydemoapp.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "mydemoapp.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
+```

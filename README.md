@@ -1477,3 +1477,70 @@ spec:
       args: ['{{ include "mydemoapp.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
 ```
+
+### Helm Resource Policies
+- Sometimes there are resources that should not be uninstalled when Helm runs a helm uninstall 
+- Chart developers can add an annotation to a resource to prevent it from being uninstalled.
+- The annotation "helm.sh/resource-policy": keep instructs Helm to skip deleting this resource when a helm operation (such as helm uninstall, helm upgrade or helm rollback) would result in its deletion.
+- Helm will no longer manage it in any way. 
+
+```yaml
+metadata:
+  annotations:
+    "helm.sh/resource-policy": keep
+```
+
+```t
+# Uninstall Helm Release
+helm uninstall myapp1
+Observation:
+1. We should see deployment should not be uninstalled
+2. Its pods also should be in running state
+```
+
+### Helm Charts Sign and Verify
+- Why do we need to sign Helm charts?
+  1. Integrity - It prevents attackers from injecting malicious code
+  2. Authentication
+    - When a Helm chart is signed, it comes with a digital signature generated using a private key held by the chart maintainer
+    - Users can verify the authenticity of the chart using the corresponding public key
+
+- Sign Process
+  1. Generate private/public keys with gpg
+  2. Export the private key to gpg format
+  3. Package and sign using `helm package --sign` command
+
+- Verify Process
+  1. Export the public key to gpg format
+  2. Verify helm chart using `helm verify` command
+
+```t
+# Helm Verify
+helm verify --keyring <PUBLIC_KEY> <RELEASE.TGZ>
+
+# Helm Install
+helm install <RELEASE_NAME> <RELEASE.TGZ> --verify --keyring <PUBLIC_KEY> --atomic
+
+# Helm Upgrade
+helm upgrade <RELEASE_NAME> <RELEASE.TGZ> --verify --keyring <PUBLIC_KEY> --atomic --set image.tag="0.2.0"
+```
+
+```t
+# Install gnupg on WindowsOS
+choco install gnupg
+
+# Verify version
+gpg --version
+
+# List Keys
+gpg --list-keys
+
+# Generating Private/Public Keys with gpg
+gpg --full-generate-key
+
+# Helm Install with --verify 
+helm install myapp1 myfirstchart-0.1.0.tgz --verify --keyring public-key/helmsigndemo1-publickey.gpg --atomic
+
+# Helm Upgrade with --verify 
+helm upgrade myapp1 myfirstchart-0.1.0.tgz --verify --keyring public-key/helmsigndemo1-publickey.gpg --atomic --set image.tag="0.2.0"
+```

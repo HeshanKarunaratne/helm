@@ -1544,3 +1544,5 @@ helm install myapp1 myfirstchart-0.1.0.tgz --verify --keyring public-key/helmsig
 # Helm Upgrade with --verify 
 helm upgrade myapp1 myfirstchart-0.1.0.tgz --verify --keyring public-key/helmsigndemo1-publickey.gpg --atomic --set image.tag="0.2.0"
 ```
+
+- Our helm repo url will be github-pages url

@@ -1546,3 +1546,41 @@ helm upgrade myapp1 myfirstchart-0.1.0.tgz --verify --keyring public-key/helmsig
 ```
 
 - Our helm repo url will be github-pages url
+
+- **artifacthub-repo.yml**
+```yaml
+repositoryID: < The ID of the Artifact Hub repository>
+owners: # (optional, used to claim repository ownership)
+  - name: Heshan Karunaratne
+    email: heshan947102@gmail.com
+ignore: # (optional, packages that should not be indexed by Artifact Hub)
+  - name: package1
+  - name: package2 # Exact match
+    version: beta # Regular expression (when omitted, all versions are ignored)
+```
+
+### Validate JSON schema
+
+- Type validation
+```json
+"replicaCount": {
+  "type": "number"
+ }
+```
+
+- Range validation
+
+- Requirement checks
+```json
+ "required": [
+    "replicaCount",
+    "image"
+  ]
+```
+- Constraint validations
+```json
+ "pullPolicy": {
+    "type": "string",
+    "pattern": "^(Always|Never|IfNotPresent)$"
+  }
+```

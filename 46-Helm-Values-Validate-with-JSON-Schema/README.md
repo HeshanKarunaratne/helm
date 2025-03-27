@@ -1,12 +1,7 @@
 # Helm Values - Validate with JSON Schema
 
-## Step-01: Introduction
-- Helm Values - Validate with JSON Schema
 
-## Step-02: Review helmbasics Helm Chart
-- Simple Helm Chart
-- deployment.yaml
-- Core focus will be on learning about `values.schema.json`
+
 
 ## Step-03: Convert values.yaml to json
 -  [Use website json2yaml](https://www.json2yaml.com/)
